@@ -173,7 +173,7 @@ angular.module('app.controllers', ['ngCordova'])
         maximumAge: 0
     };
     var watchOptions = {
-    	timeout : 3000,
+    	timeout : 20000,
     	enableHighAccuracy: false // may cause errors if true
   	};
 
