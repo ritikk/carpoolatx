@@ -23,6 +23,7 @@ angular.module('app.controllers', ['ngCordova'])
                 zoom: 16,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 scrollwheel: false,
+                disableDefaultUI: true
             };          
              
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
