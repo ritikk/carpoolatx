@@ -1,16 +1,17 @@
 <ion-view title="Carpool" hide-nav-bar="true" hide-back-button="true" id="page2" class=" ">
-    <ion-content padding="true" style="background: url(img/5UyHEOVtS9G5fKKZxs2j_google_map.jpg) no-repeat center;background-size:cover;" class="manual-ios-statusbar-padding" scroll="false">
+    <ion-content padding="true" class="manual-ios-statusbar-padding" scroll="false">
         <form id="carpool-form1" class="list ">
             <label class="item item-input " id="carpool-input1" name="pickup">
-                <input type="text" placeholder="Pickup">
+                <input type="text" placeholder="Pickup" id="pickup-address">
             </label>
             <label class="item item-input " id="carpool-input2" name="destination">
-                <input type="text" placeholder="Destination">
+                <input type="text" placeholder="Destination" id="destination-address">
             </label>
         </form>
         <form id="carpool-form2" class="list ">
-            <div class="spacer" style="width: 300px; height: 283px;"></div>
+            <div id="map" data-tap-disabled="true" style="width: 100%; height: 283px;"></div>
         </form>
+        <button id="myLocation" class="button button-positive" ng-click="moveToMyLocation()"><i class="ion-pinpoint"></i></button>
         <a ui-sref="tabsController.requestingPickup" id="carpool-button1" class=" button button-positive  button-block ">Tap me!</a>
     </ion-content>
 </ion-view>
