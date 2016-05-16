@@ -2,10 +2,10 @@
     <ion-content padding="true" class="manual-ios-statusbar-padding" scroll="false">
         <form id="carpool-form1" class="list ">
             <label class="item item-input " id="carpool-input1" name="pickup">
-                <input type="text" placeholder="Pickup" id="pickup-address">
+                <input type="text" placeholder="Pickup" id="pickup-address" data-tap-disabled="true" ng-change="disableTap('pickup-address')" ng-model="model.pickupText">
             </label>
             <label class="item item-input " id="carpool-input2" name="destination">
-                <input type="text" placeholder="Destination" id="destination-address">
+                <input type="text" placeholder="Destination" id="destination-address" data-tap-disabled="true" ng-change="disableTap('destination-address')" ng-model="model.destinationText">
             </label>
         </form>
         <form id="carpool-form2" class="list ">

@@ -148,6 +148,16 @@ angular.module('app.controllers', ['ngCordova'])
 		}
 	};
 
+	$scope.disableTap = function(elementId) {
+        var container = document.getElementsByClassName('pac-container');
+        angular.element(container).attr('data-tap-disabled', 'true');
+        var backdrop = document.getElementsByClassName('backdrop');
+        angular.element(backdrop).attr('data-tap-disabled', 'true');
+        angular.element(container).on("click", function() {
+            document.getElementById(elementId).blur();
+        });
+    };
+
 })
    
 .controller('driveCtrl', function($scope) {
