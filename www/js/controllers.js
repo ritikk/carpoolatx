@@ -27,29 +27,17 @@ angular.module('app.controllers', ['ngCordova'])
              
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
             // Create a marker and set its position.
-			  var marker = new google.maps.Marker({
+			var marker = new google.maps.Marker({
 			    map: map,
 			    position: myLatlng,
 			    title: 'Set pickup location'
-			  });       
-             
-            $scope.map = map;
-            $scope.marker = marker;   
+			});     
 
             var geocoder = new google.maps.Geocoder;
-            geocoder.geocode({'location': myLatlng}, function(results, status) {
-		    	if (status === google.maps.GeocoderStatus.OK) {
-			    	if (results[0]) {
-			        	$scope.model.pickupAddress = results[0].formatted_address;
-			      	} else {
-			        	alert('No results found');
-			      	}
-			    } else {
-			      	alert('Geocoder failed due to: ' + status);
-			    }
-		  	});
-
-		  	$scope.geocoder = geocoder;
+             
+            $scope.map = map;
+            $scope.marker = marker;  
+            $scope.geocoder = geocoder; 
 
 		  	var destinationAddressInput = /** @type {!HTMLInputElement} */(document.getElementById('destination-address'));
 	  	  	var autocompleteDestination = new google.maps.places.Autocomplete(destinationAddressInput);
@@ -64,7 +52,6 @@ angular.module('app.controllers', ['ngCordova'])
   			var pickupAddressInput = /** @type {!HTMLInputElement} */(document.getElementById('pickup-address'));
 	  	  	var autocompletePickup = new google.maps.places.Autocomplete(pickupAddressInput);
   			autocompletePickup.bindTo('bounds', map);
-  			pickupAddressInput.value = $scope.model.pickupAddress;
 
   			autocompletePickup.addListener('place_changed', function() {
 		    	marker.setVisible(false);
@@ -86,6 +73,19 @@ angular.module('app.controllers', ['ngCordova'])
 			$scope.directionsService = new google.maps.DirectionsService;
   			$scope.directionsDisplay = new google.maps.DirectionsRenderer;
   			$scope.directionsDisplay.setMap(map);
+
+  			geocoder.geocode({'location': myLatlng}, function(results, status) {
+		    	if (status === google.maps.GeocoderStatus.OK) {
+			    	if (results[0]) {
+			        	$scope.model.pickupAddress = results[0].formatted_address;
+			        	pickupAddressInput.value = results[0].formatted_address;
+			      	} else {
+			        	alert('No results found');
+			      	}
+			    } else {
+			      	alert('Geocoder failed due to: ' + status);
+			    }
+		  	});
 
         }, function(err) {
             console.log(err);
