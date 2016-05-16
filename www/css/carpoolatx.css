@@ -1,7 +1,29 @@
 .mylocation-button {
-	margin-top: 5px;
-	margin-right: 5px;
+	margin-bottom: 155px;
+	margin-right: 15px;
 	padding: 0px;
 	font-size: 32px;
 	font-weight: bold;
+}
+
+#map {
+	width: 100%;
+	height: 100%;
+}
+
+.map-bottom-button {
+	left: 15px;
+	right: 15px;
+	margin-bottom: 110px;
+}
+.map-top-button {
+	margin-left: 15px;
+	right: 15px;
+	margin-top: 15px;
+}
+
+#drive-end {
+	margin-left: 15px;
+	right: 15px;
+	margin-bottom: 10px;
 }

@@ -20,10 +20,14 @@ angular.module('app.routes', [])
     }
   })
 
-  .state('drive', {
+  .state('tabsController.drive', {
     url: '/drive',
-    templateUrl: 'templates/drive.html',
-    controller: 'driveCtrl'
+    views: {
+      'tab1': {
+        templateUrl: 'templates/drive.html',
+        controller: 'driveCtrl'
+      }  
+    }
   })
 
   .state('tabsController.profile', {
@@ -37,7 +41,7 @@ angular.module('app.routes', [])
   })
 
   .state('tabsController', {
-    url: '/page1',
+    url: '/home',
     templateUrl: 'templates/tabsController.html',
     abstract:true
   })

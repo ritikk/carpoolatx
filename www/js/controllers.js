@@ -69,7 +69,10 @@ angular.module('app.controllers', ['ngCordova'])
   			});
 
 			var myLocationButton = document.getElementById('myLocation');
-			map.controls[google.maps.ControlPosition.TOP_RIGHT].push(myLocationButton);
+			map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(myLocationButton);
+
+			var pickmeButton = document.getElementById('carpool-pickme');
+			map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(pickmeButton);
 
 			$scope.directionsService = new google.maps.DirectionsService;
   			$scope.directionsDisplay = new google.maps.DirectionsRenderer;
@@ -161,7 +164,80 @@ angular.module('app.controllers', ['ngCordova'])
 
 })
    
-.controller('driveCtrl', function($scope) {
+.controller('driveCtrl', function($scope, $ionicPlatform, $cordovaGeolocation) {
+	$scope.isDriving = false;
+
+	var posOptions = {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0
+    };
+    var watchOptions = {
+    	timeout : 3000,
+    	enableHighAccuracy: false // may cause errors if true
+  	};
+
+	$ionicPlatform.ready(function() {
+		$cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+            var lat  = position.coords.latitude;
+            var long = position.coords.longitude;
+             
+            var myLatlng = new google.maps.LatLng(lat, long);
+
+             
+            var mapOptions = {
+                center: myLatlng,
+                zoom: 16,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                scrollwheel: false,
+                disableDefaultUI: true
+            };          
+             
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
+            // Create a marker and set its position.
+			var marker = new google.maps.Marker({
+			    map: map,
+			    position: myLatlng,
+			    title: 'My location'
+			});
+
+			$scope.map = map;
+			$scope.marker = marker;
+
+			var startButton = document.getElementById('drive-start');
+			var endButton = document.getElementById('drive-end');
+			map.controls[google.maps.ControlPosition.LEFT_TOP].push(startButton);
+			map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(endButton);
+
+		},function(err) {
+        	console.log(err);
+    	});
+
+		$scope.startDrive = function() {
+			$scope.watch = $cordovaGeolocation.watchPosition(watchOptions);
+			$scope.watch.then(
+			    null,
+			    function(err) {
+			     	alert(err);
+			    },
+			    function(position) {
+			     	var lat  = position.coords.latitude;
+			     	var long = position.coords.longitude;
+			     	var myLatlng = new google.maps.LatLng(lat, long);
+			     	$scope.marker.setVisible(false);
+			     	$scope.map.setCenter(myLatlng);
+			     	$scope.marker.setPosition(myLatlng);
+			     	$scope.marker.setVisible(true);
+		  	});
+		  	$scope.isDriving = true;
+		};
+
+		$scope.endDrive = function() {
+			$scope.watch.clearWatch();
+			$scope.isDriving = false;
+		}
+		
+	});
 
 })
    
