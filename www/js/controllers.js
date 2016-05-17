@@ -74,6 +74,11 @@ angular.module('app.controllers', ['ngCordova'])
 			var pickmeButton = document.getElementById('carpool-pickme');
 			map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(pickmeButton);
 
+			var travelTimeElement = document.getElementById('travelTime');
+			map.controls[google.maps.ControlPosition.RIGHT_TOP].push(travelTimeElement);
+
+			$scope.travelTimeElement = travelTimeElement;
+
 			$scope.directionsService = new google.maps.DirectionsService;
   			$scope.directionsDisplay = new google.maps.DirectionsRenderer;
   			$scope.directionsDisplay.setMap(map);
@@ -100,7 +105,7 @@ angular.module('app.controllers', ['ngCordova'])
 		$ionicPlatform.ready(function() {
 			var marker = $scope.marker;
 			var map = $scope.map;
-			var geocoder = $scope.geocoder;
+			var geocoder = $scope.geocoder; 
 
 			$cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
 	            var lat  = position.coords.latitude;
@@ -145,6 +150,8 @@ angular.module('app.controllers', ['ngCordova'])
 			}, function(response, status) {
 		    	if (status === google.maps.DirectionsStatus.OK) {
 		      		directionsDisplay.setDirections(response);
+		      		//console.log(response);
+		      		$scope.travelTimeElement.innerHTML = "<i class='ion-ios-information'></i>&nbsp;" + response.routes[0].legs[0].distance.text + ", " + response.routes[0].legs[0].duration.text;
 		    	} else {
 		      		alert('Directions request failed due to ' + status);
 		    	}
