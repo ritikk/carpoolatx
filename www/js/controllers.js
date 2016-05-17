@@ -164,7 +164,7 @@ angular.module('app.controllers', ['ngCordova'])
 
 })
    
-.controller('driveCtrl', function($scope, $ionicPlatform, $cordovaGeolocation) {
+.controller('driveCtrl', function($scope, $ionicPlatform, $cordovaBackgroundGeolocation, $cordovaGeolocation) {
 	$scope.isDriving = false;
 
 	var posOptions = {
@@ -172,9 +172,13 @@ angular.module('app.controllers', ['ngCordova'])
         timeout: 20000,
         maximumAge: 0
     };
-    var watchOptions = {
-    	timeout : 20000,
-    	enableHighAccuracy: false // may cause errors if true
+    var backgroundOptions = {
+    	desiredAccuracy: 10,
+	    stationaryRadius: 20,
+	    distanceFilter: 30,
+	    activityType: 'AutomotiveNavigation',
+	    debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+	    stopOnTerminate: true // <-- enable this to clear background location settings when the app terminates
   	};
 
 	$ionicPlatform.ready(function() {
@@ -214,26 +218,21 @@ angular.module('app.controllers', ['ngCordova'])
     	});
 
 		$scope.startDrive = function() {
-			$scope.watch = $cordovaGeolocation.watchPosition(watchOptions);
-			$scope.watch.then(
-			    null,
-			    function(err) {
-			     	alert(err);
-			    },
-			    function(position) {
-			     	var lat  = position.coords.latitude;
-			     	var long = position.coords.longitude;
-			     	var myLatlng = new google.maps.LatLng(lat, long);
-			     	$scope.marker.setVisible(false);
-			     	$scope.map.setCenter(myLatlng);
-			     	$scope.marker.setPosition(myLatlng);
-			     	$scope.marker.setVisible(true);
-		  	});
+			$cordovaBackgroundGeolocation.configure(backgroundOptions)
+			    .then(
+			      	null, // Background never resolves
+			      	function (err) { // error callback
+			        	console.error(err);
+			      	},
+			      	function (location) { // notify callback
+			        	console.log(location);
+			        	alert(location);
+			     });
 		  	$scope.isDriving = true;
 		};
 
 		$scope.endDrive = function() {
-			$scope.watch.clearWatch();
+			$cordovaBackgroundGeolocation.stop();
 			$scope.isDriving = false;
 		}
 		
