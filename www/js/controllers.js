@@ -180,6 +180,10 @@ angular.module('app.controllers', ['ngCordova'])
 	    debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
 	    stopOnTerminate: true // <-- enable this to clear background location settings when the app terminates
   	};
+  	var watchOptions = {
+  		timeout : 20000,
+    	enableHighAccuracy: false // may cause errors if true
+	};
 
 	$ionicPlatform.ready(function() {
 		$cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
@@ -198,11 +202,14 @@ angular.module('app.controllers', ['ngCordova'])
             };          
              
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
+            var trafficLayer = new google.maps.TrafficLayer();
+            trafficLayer.setMap(map);
             // Create a marker and set its position.
 			var marker = new google.maps.Marker({
 			    map: map,
 			    position: myLatlng,
-			    title: 'My location'
+			    title: 'My location',
+			    icon: 'img/car-icon.png'
 			});
 
 			$scope.map = map;
@@ -212,29 +219,70 @@ angular.module('app.controllers', ['ngCordova'])
 			var endButton = document.getElementById('drive-end');
 			map.controls[google.maps.ControlPosition.LEFT_TOP].push(startButton);
 			map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(endButton);
+			var myLocationButton = document.getElementById('myLocation');
+			map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(myLocationButton);
 
 		},function(err) {
         	console.log(err);
     	});
 
+    	$scope.moveToMyLocation = function() {
+    		var marker = $scope.marker;
+			var map = $scope.map;
+			map.setCenter(marker.getPosition());
+    	};
+
 		$scope.startDrive = function() {
-			$cordovaBackgroundGeolocation.configure(backgroundOptions)
-			    .then(
-			      	null, // Background never resolves
+			if (window.backgroundGeoLocation) {
+				console.log('backgroundGeoLocation found');
+				$cordovaBackgroundGeolocation.configure(backgroundOptions)
+		    	.then(
+		      		null, // Background never resolves
 			      	function (err) { // error callback
 			        	console.error(err);
 			      	},
 			      	function (location) { // notify callback
-			        	console.log(location);
-			        	alert(location);
+						var lat  = position.coords.latitude;
+				     	var long = position.coords.longitude;
+				     	var myLatlng = new google.maps.LatLng(lat, long);
+				     	console.log("Position: " + JSON.stringify(myLatlng, undefined, 4));
+				     	$scope.marker.setVisible(false);
+				     	$scope.map.setCenter(myLatlng);
+				     	$scope.marker.setPosition(myLatlng);
+				     	$scope.marker.setVisible(true);
 			     });
+			} else {
+				console.log('backgroundGeoLocation not found, using normal geolocation plugin');
+
+				$scope.watch = $cordovaGeolocation.watchPosition(watchOptions);
+				$scope.watch.then(
+				    null,
+				    function(err) {
+				     	console.error(err);
+				    },
+				    function(position) {
+				     	var lat  = position.coords.latitude;
+				     	var long = position.coords.longitude;
+				     	var myLatlng = new google.maps.LatLng(lat, long);
+			        	console.log("Position: " + JSON.stringify(myLatlng, undefined, 4));
+				     	$scope.marker.setVisible(false);
+				     	$scope.map.setCenter(myLatlng);
+				     	$scope.marker.setPosition(myLatlng);
+				     	$scope.marker.setVisible(true);
+			  	});
+			}
+			
 		  	$scope.isDriving = true;
 		};
 
 		$scope.endDrive = function() {
-			$cordovaBackgroundGeolocation.stop();
+			if (window.backgroundGeoLocation) {
+				$cordovaBackgroundGeolocation.stop();
+			} else {
+				$scope.watch.clearWatch();
+			}
 			$scope.isDriving = false;
-		}
+		};
 		
 	});
 

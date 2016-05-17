@@ -5,6 +5,12 @@
 	font-size: 32px;
 	font-weight: bold;
 }
+.mylocation-button-drive {
+	margin-bottom: 75px;
+	margin-right: 15px;
+	padding: 0px;
+	font-size: 32px;
+}
 
 #map {
 	width: 100%;

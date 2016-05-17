@@ -5,6 +5,8 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
+document.addEventListener('deviceReady', onDeviceReady, false);
+
 angular.module('app', ['ionic','ionic.service.core', 'app.controllers', 'app.routes', 'app.services', 'app.directives'])
 
 .run(function($ionicPlatform) {
@@ -19,5 +21,39 @@ angular.module('app', ['ionic','ionic.service.core', 'app.controllers', 'app.rou
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    console.log("Running on platform: ", ionic.Platform.platform());
+
+    window.onerror = function(message, url, line, col, error) {
+      var data = {
+        type: 'javascript',
+        url: window.location.hash,
+        localtime: Date.now()
+      };
+      if(message)       { data.message      = message;      }
+      if(url)           { data.fileName     = url;          }
+      if(line)          { data.lineNumber   = line;         }
+      if(col)           { data.columnNumber = col;          }
+      if(error){
+        if(error.name)  { data.name         = error.name;   }
+        if(error.stack) { data.stack        = error.stack;  }
+      }
+
+      console.log('exception', data);
+      return true;
+    };
   });
-})
+  
+});
+
+function onDeviceReady() {
+  console.log('Device Ready fired');
+
+  if (backgroundGeoLocation) {
+    console.log('found backgroundGeoLocation');
+  } else {
+    console.log('backgroundGeoLocation missing');
+  }
+  console.log('cordova: ', window.cordova);
+  console.log('plugins: ', window.cordova.plugins);
+}
