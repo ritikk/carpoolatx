@@ -239,11 +239,12 @@ angular.module('app.controllers', ['ngCordova'])
 		    	.then(
 		      		null, // Background never resolves
 			      	function (err) { // error callback
-			        	console.error(err);
+			        	console.error("Error: " + JSON.stringify(err, undefined, 4));
 			      	},
 			      	function (location) { // notify callback
-						var lat  = position.coords.latitude;
-				     	var long = position.coords.longitude;
+			      		console.info("Location: " + JSON.stringify(location, undefined, 4));
+						var lat  = location.latitude;
+				     	var long = location.longitude;
 				     	var myLatlng = new google.maps.LatLng(lat, long);
 				     	console.log("Position: " + JSON.stringify(myLatlng, undefined, 4));
 				     	$scope.marker.setVisible(false);

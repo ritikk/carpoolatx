@@ -54,6 +54,4 @@ function onDeviceReady() {
   } else {
     console.log('backgroundGeoLocation missing');
   }
-  console.log('cordova: ', window.cordova);
-  console.log('plugins: ', window.cordova.plugins);
 }

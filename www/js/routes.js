@@ -1,14 +1,12 @@
 angular.module('app.routes', [])
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, $provide) {
 
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
   $stateProvider
-    
-  
 
       .state('tabsController.carpool', {
     url: '/carpool',
@@ -102,10 +100,27 @@ angular.module('app.routes', [])
     url: '/signup',
     templateUrl: 'templates/signup.html',
     controller: 'signupCtrl'
-  })
+  });
 
-$urlRouterProvider.otherwise('/welcome')
+$urlRouterProvider.otherwise('/welcome');
 
-  
+$provide.decorator('$exceptionHandler', ['$delegate', function($delegate) {
+  return function(exception, cause) {
+    $delegate(exception, cause);
+    var data = {
+        type: 'angular',
+        url: window.location.hash,
+        localtime: Date.now()
+      };
+      if(cause)               { data.cause    = cause;              }
+      if(exception){
+        if(exception.message) { data.message  = exception.message;  }
+        if(exception.name)    { data.name     = exception.name;     }
+        if(exception.stack)   { data.stack    = exception.stack;    }
+      }
+
+      console.error('exception', data);
+    };
+}]);
 
 });
